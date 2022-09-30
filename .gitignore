@@ -1,0 +1,8 @@
+﻿.vs/SocialMedia/DesignTimeBuild
+.vs/SocialMedia/v16
+SocialMedia.Api/bin
+SocialMedia.Api/obj
+SocialMedia.Core/bin
+SocialMedia.Core/obj
+SocialMedia.Infraestructure/bin
+SocialMedia.Infraestructure/obj

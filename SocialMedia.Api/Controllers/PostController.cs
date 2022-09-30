@@ -39,7 +39,7 @@ namespace SocialMedia.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(PostDto postDto)
         {
-            var post = _mapper.Map<Post>(postDto);
+           var post = _mapper.Map<Post>(postDto);
            await _postRepository.InsertPost(post);
            return Ok(post);
         }
