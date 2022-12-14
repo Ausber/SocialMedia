@@ -28,7 +28,10 @@ namespace SocialMedia.Api
         {
             //AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().ConfigureApiBehaviorOptions(options => {
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+            }).ConfigureApiBehaviorOptions(options => {
                 options.SuppressModelStateInvalidFilter = true;
             });
             //Conexion
@@ -36,8 +39,8 @@ namespace SocialMedia.Api
             options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
             //Dependencias
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IPostRepository, PostRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             // Filters
             services.AddMvc(options => {
                 options.Filters.Add<ValidationFilter>();
