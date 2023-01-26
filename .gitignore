@@ -6,3 +6,8 @@ SocialMedia.Core/bin
 SocialMedia.Core/obj
 SocialMedia.Infraestructure/bin
 SocialMedia.Infraestructure/obj
+SocialMedia.UnitTests/bin
+SocialMedia.UnitTests/obj
+SocialMedia.IntegrationTests/bin
+SocialMedia.IntegrationTests/obj
+.vs
