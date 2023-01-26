@@ -7,6 +7,7 @@ using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Infraestructure.Interfaces;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,13 +20,15 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
+        private readonly IUriService _uriServices;
 
-        public PostController(IPostService postService,IMapper mapper)
+        public PostController(IPostService postService,IMapper mapper, IUriService uriService)
         {
             _postService = postService;
             _mapper = mapper;
+            _uriServices = uriService;
         }
-        [HttpGet]
+        [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
@@ -34,12 +37,14 @@ namespace SocialMedia.Api.Controllers
             var postsDto = _mapper.Map<IEnumerable<PostDto >>(posts);
             var metadata = new Metadata
             {
-               TotalCount = posts.TotalCount,
-               PageSize = posts.PageSize,
-               CurrentPage = posts.CurrentPage,
-               TotalPages = posts.TotalPages,
-               HasNextPage = posts.HasNextPage,
-               HasPreviousPage = posts.HasPreviousPage
+                TotalCount = posts.TotalCount,
+                PageSize = posts.PageSize,
+                CurrentPage = posts.CurrentPage,
+                TotalPages = posts.TotalPages,
+                HasNextPage = posts.HasNextPage,
+                HasPreviousPage = posts.HasPreviousPage,
+                NextPageUrl = _uriServices.GetPostPaginationUri(filters,Url.RouteUrl(nameof(GetPosts))).ToString(),
+                PreviousPageUrl = _uriServices.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString()
             };
 
             var response = new ApiResponse<IEnumerable<PostDto>>(postsDto)
