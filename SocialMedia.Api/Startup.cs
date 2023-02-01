@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
@@ -15,6 +16,8 @@ using SocialMedia.Infraestructure.Interfaces;
 using SocialMedia.Infraestructure.Repositories;
 using SocialMedia.Infraestructure.Services;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace SocialMedia.Api
 {
@@ -59,6 +62,16 @@ namespace SocialMedia.Api
                 var absoluteUri = string.Concat(request.Scheme,"://",request.Host.ToUriComponent());
                 return new UriService(absoluteUri);
             });
+
+            services.AddSwaggerGen(doc =>
+            {
+                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Media API", Version = "v1" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory,xmlFile);
+                doc.IncludeXmlComments(xmlPath);
+            });
+
             // Filters
             services.AddMvc(options => {
                 options.Filters.Add<ValidationFilter>();
@@ -77,6 +90,12 @@ namespace SocialMedia.Api
 
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json","Social Media API V1");
+                options.RoutePrefix = string.Empty;
+            });
             app.UseRouting();
 
             app.UseAuthorization();

@@ -34,8 +34,8 @@ namespace SocialMedia.Core.Services
 
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
-            filters.PageNumber = filters.PageNumber == _paginationOptions.DefaultPageNumber ? 1 : filters.PageNumber;
-            filters.PageSize = filters.PageSize == _paginationOptions.DefaultPageSize ? 20 : filters.PageSize;
+            filters.PageNumber = filters.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize ==  0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
 
             var posts = _unitOfWork.PostRepository.GetAll();
             if(filters.UserId != null)
