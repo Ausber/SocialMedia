@@ -13,6 +13,7 @@ using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infraestructure.Data;
+using SocialMedia.Infraestructure.Extensions;
 using SocialMedia.Infraestructure.Filters;
 using SocialMedia.Infraestructure.Interfaces;
 using SocialMedia.Infraestructure.Options;
@@ -51,33 +52,13 @@ namespace SocialMedia.Api
             });
 
             //Parametros Configurables
-            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOptions"));
+            services.AddOptions(Configuration);
             //Conexion
-            services.AddDbContext<SocialMediaContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
+            services.AddDbContexts(Configuration);
             //Dependencias
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<ISecurityService, SecurityService>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IPasswordService, PasswordService>();
-            services.AddSingleton<IUriService>(provider =>
-            {
-                var acceso = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = acceso.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme,"://",request.Host.ToUriComponent());
-                return new UriService(absoluteUri);
-            });
+            services.AddServices();
 
-            services.AddSwaggerGen(doc =>
-            {
-                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Media API", Version = "v1" });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory,xmlFile);
-                doc.IncludeXmlComments(xmlPath);
-            });
+            services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
             services.AddAuthentication(options =>
             {
@@ -117,8 +98,8 @@ namespace SocialMedia.Api
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("../swagger/v1/swagger.json","Social Media API V1");
-                //options.RoutePrefix = string.Empty;
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API V1");
+                options.RoutePrefix = string.Empty;
             });
             app.UseRouting();
 

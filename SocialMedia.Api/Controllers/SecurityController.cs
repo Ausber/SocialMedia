@@ -26,7 +26,7 @@ namespace SocialMedia.Api.Controllers
             _mapper= mapper;
             _passwordService= passwordService;
         }
-
+        [HttpPost]
         public async Task<IActionResult> Post(SecurityDto securityDto)
         {
             var security = _mapper.Map<Security>(securityDto);
