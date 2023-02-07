@@ -6,7 +6,6 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
